@@ -334,7 +334,17 @@ async function save(ds,l){
   const row=rows.find(r=>r.lid===l);
   if(!row)return;
   const empty=row.prelievi==null&&row.uscite==null&&(!row.note||!row.note.trim());
-  if(empty){row.dirty=false;return;}
+  // se riga è vuota E non esiste nel DB → non salvare
+  // se riga è vuota MA esiste nel DB → cancella la riga dal DB
+  if(empty){
+    if(!row.dbId){row.dirty=false;return;}
+    // esiste nel DB ma ora è vuota → elimina
+    try{
+      await sb.from(TABLE).delete().eq('id',row.dbId);
+      row.dbId=null;row.dirty=false;setDot('ok');
+    }catch(e){console.error(e);setDot('error');}
+    return;
+  }
   setDot('saving');
   const payload={data:ds,prelievi:row.prelievi??null,uscite:row.uscite??null,note:row.note||null,generato_il:new Date().toISOString()};
   try{
