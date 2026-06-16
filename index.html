@@ -405,6 +405,10 @@ const TABLE_NAME = 'spese';
 const LS_URL_KEY = 'spese_sb_url';
 const LS_KEY_KEY = 'spese_sb_key';
 
+// ─── CREDENZIALI HARDCODATE ───
+const SB_URL = 'https://zzfbtzhvvknffkosunqe.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6ZmJ0emh2dmtuZmZrb3N1bnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDU5NDAsImV4cCI6MjA5MzEyMTk0MH0.rntb1fkpVDBc-B_V6kvZ4-Oukzl4efzZH1ga7aZLNhc';
+
 // ─── STATE ───
 let supabase   = null;          // client Supabase
 let activeYear = new Date().getFullYear();
@@ -447,14 +451,11 @@ function setStatus(state) {
 
 // ─── CONFIGURAZIONE ───
 function loadConfig() {
-  const url = localStorage.getItem(LS_URL_KEY);
-  const key = localStorage.getItem(LS_KEY_KEY);
-  if (url) $('cfg-url').value = url;
-  if (key) $('cfg-key').value = key;
-  if (url && key) {
-    initSupabase(url, key);
-    hideConfigOverlay();
-  }
+  // Credenziali hardcodate — nessun popup necessario
+  initSupabase(SB_URL, SB_KEY);
+  $('config-overlay').style.display = 'none';
+  buildMonthTabs();
+  loadMonthData();
 }
 
 function hideConfigOverlay() {
@@ -467,8 +468,6 @@ $('cfg-save').addEventListener('click', () => {
   const url = $('cfg-url').value.trim();
   const key = $('cfg-key').value.trim();
   if (!url || !key) { showToast('⚠️ Inserisci URL e Key'); return; }
-  localStorage.setItem(LS_URL_KEY, url);
-  localStorage.setItem(LS_KEY_KEY, key);
   initSupabase(url, key);
   hideConfigOverlay();
   showToast('✅ Connesso a Supabase');
