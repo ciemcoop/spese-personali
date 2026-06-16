@@ -410,7 +410,7 @@ const SB_URL = 'https://zzfbtzhvvknffkosunqe.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6ZmJ0emh2dmtuZmZrb3N1bnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDU5NDAsImV4cCI6MjA5MzEyMTk0MH0.rntb1fkpVDBc-B_V6kvZ4-Oukzl4efzZH1ga7aZLNhc';
 
 // ─── STATE ───
-let supabase   = null;          // client Supabase
+let sbClient   = null;          // client Supabase
 let activeYear = new Date().getFullYear();
 let activeMonth= new Date().getMonth();   // 0-based
 let monthData  = {};            // { 'YYYY-MM-DD': { prelievi, uscite, note } }
@@ -419,7 +419,7 @@ let statusOk   = true;
 
 // ─── SUPABASE INIT ───
 function initSupabase(url, key) {
-  supabase = window.supabase.createClient(url, key);
+  sbClient = window.supabase.createClient(url, key);
 }
 
 // ─── DOM HELPERS ───
@@ -511,13 +511,13 @@ async function loadMonthData() {
   monthData = {};
   renderGrid(); // mostra subito la griglia vuota
 
-  if (!supabase) return;
+  if (!sbClient) return;
 
   const firstDay = `${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
   const lastDay  = `${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear, activeMonth)}`;
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await sbClient
       .from(TABLE_NAME)
       .select('data, prelievi, uscite, note')
       .gte('data', firstDay)
@@ -671,7 +671,7 @@ function onCellKeydown(e) {
 
 // ─── SAVE ROW ───
 async function saveRow(date) {
-  if (!supabase) return;
+  if (!sbClient) return;
 
   const row = monthData[date] || {};
   // non salvare se la riga è vuota
@@ -688,7 +688,7 @@ async function saveRow(date) {
   };
 
   try {
-    const { error } = await supabase
+    const { error } = await sbClient
       .from(TABLE_NAME)
       .upsert(payload, { onConflict: 'data' });
 
@@ -718,9 +718,9 @@ function updateTotals() {
 
 // ─── EXPORT CSV ───
 async function exportCSV(scope) {
-  if (!supabase) { showToast('⚠️ Configura Supabase prima'); return; }
+  if (!sbClient) { showToast('⚠️ Configura Supabase prima'); return; }
 
-  let query = supabase.from(TABLE_NAME).select('data, prelievi, uscite, note, generato_il').order('data');
+  let query = sbClient.from(TABLE_NAME).select('data, prelievi, uscite, note, generato_il').order('data');
 
   if (scope === 'month') {
     const first = `${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
