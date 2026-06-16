@@ -25,7 +25,6 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-size: 15px; -webkit-font-smoothing: antialiased; }
-
     #app { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
 
     /* TOPBAR */
@@ -55,17 +54,15 @@
     .day-block { border-bottom: 2px solid var(--border); }
     .day-block.today { background: rgba(79,156,249,0.04); }
 
-    /* SINGOLA RIGA SPESA */
+    /* ENTRY ROW */
     .entry-row { display: grid; grid-template-columns: 48px 1fr 1fr 2fr 32px; align-items: center; min-height: 44px; border-bottom: 1px solid rgba(46,51,80,0.5); transition: background 0.1s; }
     .entry-row:last-child { border-bottom: none; }
     .entry-row:hover { background: rgba(255,255,255,0.02); }
 
-    /* la data appare solo sulla prima riga del giorno */
     .day-label { padding: 4px 6px; font-size: 0.75rem; font-weight: 600; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
     .day-label .dn { font-size: 1rem; font-weight: 700; color: var(--text); }
     .day-label .dw { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
     .day-block.today .day-label .dn { color: var(--accent); }
-    .day-label.empty { } /* placeholder vuoto per righe successive */
 
     /* INPUTS */
     .cell-input { width: 100%; padding: 7px 6px; background: transparent; border: none; border-left: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 0.82rem; outline: none; transition: background 0.15s; min-height: 44px; }
@@ -77,22 +74,22 @@
     .cell-input.filled-green { color: var(--green); }
     .cell-input.filled-red   { color: var(--red); }
 
-    /* PULSANTE + e - */
-    .btn-add-row { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--accent); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: all 0.15s; line-height: 1; }
+    /* BUTTONS */
+    .btn-add-row { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--accent); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: all 0.15s; }
     .btn-add-row:hover { background: var(--accent-dim); border-color: var(--accent); }
-    .btn-del-row { width: 22px; height: 22px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: var(--text-muted); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: all 0.15s; line-height: 1; }
+    .btn-del-row { width: 22px; height: 22px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: var(--text-muted); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: all 0.15s; }
     .btn-del-row:hover { background: var(--red-dim); color: var(--red); border-color: var(--red); }
-    /* il + appare solo sull'ultima riga del giorno */
     .action-cell { display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--border); }
 
-    /* TOTALS */
-    #totals-bar { flex-shrink: 0; background: var(--surface); border-top: 2px solid var(--border); padding: 10px 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
-    .tot-group { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
-    .tot-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
-    .tot-value { font-size: 1.05rem; font-weight: 700; font-family: var(--font-mono); margin-top: 2px; }
+    /* TOTALS BAR */
+    #totals-bar { flex-shrink: 0; background: var(--surface); border-top: 2px solid var(--border); padding: 8px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .tot-group { display: flex; flex-direction: column; align-items: center; min-width: 72px; }
+    .tot-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+    .tot-value { font-size: 0.95rem; font-weight: 700; font-family: var(--font-mono); margin-top: 1px; }
     .tot-value.green  { color: var(--green); }
     .tot-value.red    { color: var(--red); }
     .tot-value.accent { color: var(--accent); }
+    .tot-divider { width: 1px; height: 32px; background: var(--border); flex-shrink: 0; }
     #status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-left: auto; flex-shrink: 0; transition: background 0.3s; }
     #status-dot.saving { background: #fbbf24; }
     #status-dot.error  { background: var(--red); }
@@ -111,10 +108,11 @@
     .exp-close { width: 100%; padding: 9px; border: none; background: transparent; color: var(--text-muted); font-size: 0.85rem; cursor: pointer; margin-top: 4px; }
 
     @media (max-width: 480px) {
-      #grid-header, .entry-row { grid-template-columns: 38px 75px 75px 1fr 28px; }
+      #grid-header, .entry-row { grid-template-columns: 38px 72px 72px 1fr 28px; }
       .cell-input { font-size: 0.78rem; padding: 6px 4px; }
       .gh-cell { font-size: 0.62rem; padding: 8px 4px; }
       .day-label .dn { font-size: 0.9rem; }
+      .tot-value { font-size: 0.85rem; }
     }
   </style>
 </head>
@@ -158,16 +156,21 @@
 
   <div id="totals-bar">
     <div class="tot-group">
-      <span class="tot-label">Prelievi</span>
+      <span class="tot-label">Prelievi mese</span>
       <span class="tot-value green" id="tot-prelievi">€ 0,00</span>
     </div>
     <div class="tot-group">
-      <span class="tot-label">Uscite</span>
+      <span class="tot-label">Uscite mese</span>
       <span class="tot-value red" id="tot-uscite">€ 0,00</span>
     </div>
     <div class="tot-group">
-      <span class="tot-label">Bilancio</span>
-      <span class="tot-value accent" id="tot-bilancio">€ 0,00</span>
+      <span class="tot-label">Saldo mese</span>
+      <span class="tot-value accent" id="tot-saldo-mese">€ 0,00</span>
+    </div>
+    <div class="tot-divider"></div>
+    <div class="tot-group">
+      <span class="tot-label">Saldo globale</span>
+      <span class="tot-value accent" id="tot-saldo-globale">€ 0,00</span>
     </div>
     <div id="status-dot" title="Connesso"></div>
   </div>
@@ -175,7 +178,8 @@
 
 <script>
 /* ═══════════════════════════════════════════════════
-   SPESE PERSONALI — multi-riga per giorno
+   SPESE PERSONALI — v3
+   fix: note, delete, refresh, saldo globale
    ═══════════════════════════════════════════════════ */
 
 const MONTHS_IT  = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
@@ -184,35 +188,32 @@ const TABLE_NAME = 'spese';
 const SB_URL     = 'https://zzfbtzhvvknffkosunqe.supabase.co';
 const SB_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6ZmJ0emh2dmtuZmZrb3N1bnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDU5NDAsImV4cCI6MjA5MzEyMTk0MH0.rntb1fkpVDBc-B_V6kvZ4-Oukzl4efzZH1ga7aZLNhc';
 
-let sbClient    = null;
+const sbClient  = window.supabase.createClient(SB_URL, SB_KEY);
 let activeYear  = new Date().getFullYear();
 let activeMonth = new Date().getMonth();
-// monthData: { 'YYYY-MM-DD': [ {id, prelievi, uscite, note}, ... ] }
-let monthData   = {};
-let saveTimers  = {};
 
-// ── INIT ──
-sbClient = window.supabase.createClient(SB_URL, SB_KEY);
+// monthData: { 'YYYY-MM-DD': [ {localId, dbId, prelievi, uscite, note, dirty} ] }
+let monthData  = {};
+let saveTimers = {};
+let localIdSeq = 0;
 
-const $   = id => document.getElementById(id);
-const fmt = n  => (!n && n !== 0) ? '' : n.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2});
-const parseNum = s => { if (!s || s.trim()==='') return null; return parseFloat(s.replace(',','.')) || null; };
-const toDateStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const $         = id => document.getElementById(id);
+const newLid    = () => 'L' + (++localIdSeq);
+const fmt       = n  => (!n && n !== 0) ? '' : n.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2});
+const parseNum  = s  => { if (!s || !s.trim()) return null; const v = parseFloat(s.replace(',','.')); return isNaN(v) ? null : v; };
+const toDateStr = d  => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const daysInMonth = (y,m) => new Date(y, m+1, 0).getDate();
-const uid = () => Math.random().toString(36).slice(2,10); // id locale temporaneo
+const escHtml   = s  => (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
-function showToast(msg, dur=2000) {
-  const t=$('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), dur);
-}
+function showToast(msg, dur=2000) { const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
 function setStatus(s) {
   const d=$('status-dot'); d.className='';
   if(s==='saving') { d.classList.add('saving'); d.title='Salvataggio...'; }
   else if(s==='error') { d.classList.add('error'); d.title='Errore'; }
-  else { d.title='Connesso'; }
+  else d.title='Connesso';
 }
 
-// ── MONTH TABS ──
+/* ── MONTH TABS ── */
 function buildMonthTabs() {
   const c=$('month-tabs'); c.innerHTML='';
   MONTHS_IT.forEach((m,i)=>{
@@ -231,45 +232,65 @@ function switchMonth(i) {
   loadMonthData();
 }
 
-// ── LOAD DATA ──
+/* ── LOAD DATA ── */
 async function loadMonthData() {
   monthData={};
   renderGrid();
   const first=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
   const last =`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear,activeMonth)}`;
   try {
-    const {data,error}=await sbClient.from(TABLE_NAME).select('id,data,prelievi,uscite,note').gte('data',first).lte('data',last).order('data').order('id');
+    const {data,error}=await sbClient.from(TABLE_NAME)
+      .select('id,data,prelievi,uscite,note')
+      .gte('data',first).lte('data',last)
+      .order('data').order('id');
     if(error) throw error;
     (data||[]).forEach(row=>{
       if(!monthData[row.data]) monthData[row.data]=[];
-      monthData[row.data].push({id:row.id, prelievi:row.prelievi, uscite:row.uscite, note:row.note||''});
+      monthData[row.data].push({localId:newLid(), dbId:row.id, prelievi:row.prelievi, uscite:row.uscite, note:row.note||'', dirty:false});
     });
     renderGrid();
     setStatus('ok');
   } catch(e) { console.error(e); setStatus('error'); showToast('⚠️ Errore caricamento'); }
+  await loadSaldoGlobale();
 }
 
-// ── RENDER ──
+/* ── SALDO GLOBALE ── */
+async function loadSaldoGlobale() {
+  try {
+    const {data,error}=await sbClient.from(TABLE_NAME).select('prelievi,uscite');
+    if(error) throw error;
+    let totP=0, totU=0;
+    (data||[]).forEach(r=>{ totP+=r.prelievi||0; totU+=r.uscite||0; });
+    const sg=$('tot-saldo-globale');
+    const bil=totP-totU;
+    sg.textContent='€ '+fmt(bil);
+    sg.className='tot-value '+(bil>=0?'green':'red');
+  } catch(e) { console.error(e); }
+}
+
+/* ── RENDER ── */
 function renderGrid() {
   const scroll=$('grid-scroll');
   const today=new Date(); const todayStr=toDateStr(today);
   const days=daysInMonth(activeYear,activeMonth);
-  const blocks=[];
+  const html=[];
 
   for(let d=1;d<=days;d++){
     const date=new Date(activeYear,activeMonth,d);
     const dateStr=toDateStr(date);
     const dow=date.getDay();
     const isToday=dateStr===todayStr;
-    const rows=monthData[dateStr]||[{id:'new_'+uid(), prelievi:null, uscite:null, note:''}];
+    const rows=monthData[dateStr]||[];
+    // se non ci sono righe, mostra sempre 1 riga vuota
+    const displayRows=rows.length>0 ? rows : [{localId:'_empty_'+dateStr, dbId:null, prelievi:null, uscite:null, note:'', dirty:false}];
 
-    let rowsHtml='';
-    rows.forEach((row,ri)=>{
+    const rowsHtml=displayRows.map((row,ri)=>{
       const isFirst=ri===0;
-      const isLast=ri===rows.length-1;
+      const isLast=ri===displayRows.length-1;
       const p=row.prelievi!=null?fmt(row.prelievi):'';
       const u=row.uscite!=null?fmt(row.uscite):'';
-      const n=row.note||'';
+      const n=escHtml(row.note||'');
+      const lid=row.localId;
 
       const dayCell=isFirst
         ? `<div class="day-label"><span class="dn">${d}</span><span class="dw">${DAYS_IT[dow]}</span></div>`
@@ -277,94 +298,119 @@ function renderGrid() {
 
       const actionCell=isLast
         ? `<div class="action-cell"><button class="btn-add-row" data-date="${dateStr}" title="Aggiungi riga">+</button></div>`
-        : `<div class="action-cell"><button class="btn-del-row" data-date="${dateStr}" data-rowid="${row.id}" title="Elimina riga">×</button></div>`;
+        : `<div class="action-cell"><button class="btn-del-row" data-lid="${lid}" data-date="${dateStr}" title="Elimina riga">×</button></div>`;
 
-      rowsHtml+=`
-        <div class="entry-row" data-date="${dateStr}" data-rowid="${row.id}">
-          ${dayCell}
-          <input class="cell-input money entrate${p?' filled-green':''}" data-field="prelievi" data-date="${dateStr}" data-rowid="${row.id}" type="text" inputmode="decimal" placeholder="0,00" value="${p}"/>
-          <input class="cell-input money uscite${u?' filled-red':''}"   data-field="uscite"   data-date="${dateStr}" data-rowid="${row.id}" type="text" inputmode="decimal" placeholder="0,00" value="${u}"/>
-          <input class="cell-input note"                                  data-field="note"     data-date="${dateStr}" data-rowid="${row.id}" type="text" inputmode="text"    placeholder="Descrizione…" value="${escHtml(n)}"/>
-          ${actionCell}
-        </div>`;
-    });
+      return `<div class="entry-row" data-lid="${lid}" data-date="${dateStr}">
+        ${dayCell}
+        <input class="cell-input money entrate${p?' filled-green':''}" data-field="prelievi" data-lid="${lid}" data-date="${dateStr}" type="text" inputmode="decimal" placeholder="0,00" value="${p}"/>
+        <input class="cell-input money uscite${u?' filled-red':''}"   data-field="uscite"   data-lid="${lid}" data-date="${dateStr}" type="text" inputmode="decimal" placeholder="0,00" value="${u}"/>
+        <input class="cell-input note"                                  data-field="note"     data-lid="${lid}" data-date="${dateStr}" type="text" inputmode="text"    placeholder="Descrizione…" value="${n}"/>
+        ${actionCell}
+      </div>`;
+    }).join('');
 
-    blocks.push(`<div class="day-block${isToday?' today':''}" data-date="${dateStr}">${rowsHtml}</div>`);
+    html.push(`<div class="day-block${isToday?' today':''}" data-date="${dateStr}">${rowsHtml}</div>`);
   }
 
-  scroll.innerHTML=blocks.join('');
+  scroll.innerHTML=html.join('');
 
-  // eventi input
   scroll.querySelectorAll('.cell-input').forEach(inp=>{
-    inp.addEventListener('input', onCellInput);
-    inp.addEventListener('blur',  onCellBlur);
-    inp.addEventListener('keydown', onCellKeydown);
+    inp.addEventListener('input',  onInput);
+    inp.addEventListener('blur',   onBlur);
+    inp.addEventListener('keydown',onKeydown);
   });
-  // pulsante +
-  scroll.querySelectorAll('.btn-add-row').forEach(btn=>{
-    btn.addEventListener('click', e=>addRow(e.currentTarget.dataset.date));
-  });
-  // pulsante ×
-  scroll.querySelectorAll('.btn-del-row').forEach(btn=>{
-    btn.addEventListener('click', e=>delRow(e.currentTarget.dataset.date, e.currentTarget.dataset.rowid));
-  });
+  scroll.querySelectorAll('.btn-add-row').forEach(btn=>btn.addEventListener('click',e=>addRow(e.currentTarget.dataset.date)));
+  scroll.querySelectorAll('.btn-del-row').forEach(btn=>btn.addEventListener('click',e=>delRow(e.currentTarget.dataset.date, e.currentTarget.dataset.lid)));
 
   if(activeMonth===today.getMonth()&&activeYear===today.getFullYear()){
     const tr=scroll.querySelector(`[data-date="${todayStr}"]`);
     if(tr) setTimeout(()=>tr.scrollIntoView({block:'center'}),100);
   }
-  updateTotals();
+  updateMonthTotals();
 }
 
-function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-// ── ADD ROW ──
+/* ── ADD ROW ── */
 function addRow(dateStr) {
   if(!monthData[dateStr]) monthData[dateStr]=[];
-  monthData[dateStr].push({id:'new_'+uid(), prelievi:null, uscite:null, note:''});
+  monthData[dateStr].push({localId:newLid(), dbId:null, prelievi:null, uscite:null, note:'', dirty:false});
   renderGrid();
-  // focus sulla prima cella della nuova riga
+  // focus sull'input prelievi dell'ultima riga aggiunta
   const block=document.querySelector(`.day-block[data-date="${dateStr}"]`);
-  if(block){ const inputs=block.querySelectorAll('.cell-input'); if(inputs.length) inputs[inputs.length-3].focus(); }
+  if(block){ const rows=block.querySelectorAll('.entry-row'); const last=rows[rows.length-1]; if(last){ const inp=last.querySelector('.cell-input'); if(inp) inp.focus(); } }
 }
 
-// ── DEL ROW ──
-async function delRow(dateStr, rowId) {
+/* ── DEL ROW ── */
+async function delRow(dateStr, lid) {
   const rows=monthData[dateStr]||[];
-  if(rows.length<=1){
-    // se è l'unica riga, svuota invece di eliminare
-    rows[0]={...rows[0], prelievi:null, uscite:null, note:''};
-    if(!String(rowId).startsWith('new_')) await sbClient.from(TABLE_NAME).delete().eq('id', rowId);
-    monthData[dateStr]=[{id:'new_'+uid(), prelievi:null, uscite:null, note:''}];
-  } else {
-    monthData[dateStr]=rows.filter(r=>r.id!==rowId);
-    if(!String(rowId).startsWith('new_')){
-      try { await sbClient.from(TABLE_NAME).delete().eq('id', rowId); setStatus('ok'); }
-      catch(e){ setStatus('error'); showToast('⚠️ Errore eliminazione'); }
-    }
+  const row=rows.find(r=>r.localId===lid);
+  if(!row) return;
+
+  // cancella dal DB se esiste
+  if(row.dbId) {
+    try {
+      const {error}=await sbClient.from(TABLE_NAME).delete().eq('id',row.dbId);
+      if(error) throw error;
+      setStatus('ok');
+    } catch(e){ console.error(e); setStatus('error'); showToast('⚠️ Errore eliminazione'); return; }
   }
+
+  // rimuovi dallo stato locale
+  monthData[dateStr]=rows.filter(r=>r.localId!==lid);
+  // se era l'unica riga, lascia l'array vuoto (renderGrid mostrerà riga vuota)
   renderGrid();
-  updateTotals();
+  updateMonthTotals();
+  await loadSaldoGlobale();
 }
 
-// ── INPUT HANDLERS ──
-function onCellInput(e) {
-  const inp=e.target, date=inp.dataset.date, field=inp.dataset.field, rowId=inp.dataset.rowid, val=inp.value;
+/* ── INPUT: aggiorna solo stato locale ── */
+function onInput(e) {
+  const inp=e.target, dateStr=inp.dataset.date, field=inp.dataset.field, lid=inp.dataset.lid, val=inp.value;
+
   if(field==='prelievi') inp.classList.toggle('filled-green', val.trim()!=='');
   if(field==='uscite')   inp.classList.toggle('filled-red',   val.trim()!=='');
-  const rows=monthData[date]||[]; const row=rows.find(r=>r.id===rowId);
-  if(row){ if(field==='note') row.note=val; else row[field]=parseNum(val); }
-  updateTotals();
-  clearTimeout(saveTimers[rowId]);
-  saveTimers[rowId]=setTimeout(()=>saveRow(date,rowId),800);
+
+  // trova o crea riga nello stato
+  if(!monthData[dateStr]) monthData[dateStr]=[];
+  let row=monthData[dateStr].find(r=>r.localId===lid);
+  if(!row){
+    // riga "vuota" ancora non in monthData — aggiungila
+    row={localId:lid, dbId:null, prelievi:null, uscite:null, note:'', dirty:false};
+    monthData[dateStr].push(row);
+  }
+
+  // aggiorna il campo — per le note salva il testo RAW (senza parseNum)
+  if(field==='note') {
+    row.note=val;          // salva sempre come stringa
+  } else {
+    row[field]=parseNum(val);
+  }
+  row.dirty=true;
+
+  updateMonthTotals();
+
+  // debounce salvataggio 1s
+  clearTimeout(saveTimers[lid]);
+  saveTimers[lid]=setTimeout(()=>saveRow(dateStr,lid),1000);
 }
-function onCellBlur(e) {
-  const inp=e.target, date=inp.dataset.date, field=inp.dataset.field, rowId=inp.dataset.rowid;
-  if(field!=='note'){ const n=parseNum(inp.value); inp.value=n!=null?fmt(n):''; }
-  clearTimeout(saveTimers[rowId]);
-  saveRow(date,rowId);
+
+/* ── BLUR: formatta numero, NON risalva se non dirty ── */
+function onBlur(e) {
+  const inp=e.target, field=inp.dataset.field, lid=inp.dataset.lid, dateStr=inp.dataset.date;
+  // formatta solo i numeri
+  if(field!=='note'){
+    const n=parseNum(inp.value);
+    inp.value=n!=null?fmt(n):'';
+  }
+  // salva solo se la riga è stata modificata
+  const rows=monthData[dateStr]||[];
+  const row=rows.find(r=>r.localId===lid);
+  if(row&&row.dirty){
+    clearTimeout(saveTimers[lid]);
+    saveRow(dateStr,lid);
+  }
 }
-function onCellKeydown(e) {
+
+function onKeydown(e) {
   if(e.key==='Enter'||e.key==='Tab'){
     e.preventDefault();
     const inputs=Array.from(document.querySelectorAll('.cell-input'));
@@ -374,63 +420,79 @@ function onCellKeydown(e) {
   }
 }
 
-// ── SAVE ROW ──
-async function saveRow(dateStr, rowId) {
-  const rows=monthData[dateStr]||[]; const row=rows.find(r=>r.id===rowId);
+/* ── SAVE ROW ── */
+async function saveRow(dateStr, lid) {
+  const rows=monthData[dateStr]||[];
+  const row=rows.find(r=>r.localId===lid);
   if(!row) return;
-  if(row.prelievi==null&&row.uscite==null&&(!row.note||row.note.trim()==='')) return;
+
+  // non salvare righe completamente vuote
+  const isEmpty=row.prelievi==null && row.uscite==null && (!row.note||row.note.trim()==='');
+  if(isEmpty) { row.dirty=false; return; }
+
   setStatus('saving');
-  const payload={ data:dateStr, prelievi:row.prelievi??null, uscite:row.uscite??null, note:row.note?.trim()||null, generato_il:new Date().toISOString() };
+  const payload={
+    data:       dateStr,
+    prelievi:   row.prelievi??null,
+    uscite:     row.uscite??null,
+    note:       row.note||null,      // salva note così come sono
+    generato_il:new Date().toISOString()
+  };
+
   try {
-    if(String(rowId).startsWith('new_')){
+    if(!row.dbId){
       // INSERT
       const {data,error}=await sbClient.from(TABLE_NAME).insert(payload).select('id').single();
       if(error) throw error;
-      row.id=data.id; // aggiorna id locale con quello reale
-      // aggiorna anche il DOM
-      document.querySelectorAll(`[data-rowid="${rowId}"]`).forEach(el=>el.dataset.rowid=data.id);
+      row.dbId=data.id;
+      // aggiorna data-lid nel DOM con nuovo dbId (non necessario ma per coerenza)
     } else {
       // UPDATE
-      const {error}=await sbClient.from(TABLE_NAME).update(payload).eq('id', rowId);
+      const {error}=await sbClient.from(TABLE_NAME).update(payload).eq('id',row.dbId);
       if(error) throw error;
     }
+    row.dirty=false;
     setStatus('ok');
+    await loadSaldoGlobale();
   } catch(e){ console.error(e); setStatus('error'); showToast('⚠️ Errore salvataggio'); }
 }
 
-// ── TOTALI ──
-function updateTotals() {
+/* ── TOTALI MESE ── */
+function updateMonthTotals() {
   let totP=0, totU=0;
   Object.values(monthData).forEach(rows=>rows.forEach(r=>{ totP+=r.prelievi||0; totU+=r.uscite||0; }));
   const bil=totP-totU;
   $('tot-prelievi').textContent='€ '+fmt(totP);
   $('tot-uscite').textContent='€ '+fmt(totU);
-  const b=$('tot-bilancio'); b.textContent='€ '+fmt(bil); b.className='tot-value '+(bil>=0?'green':'red');
+  const sm=$('tot-saldo-mese'); sm.textContent='€ '+fmt(bil); sm.className='tot-value '+(bil>=0?'green':'red');
 }
 
-// ── EXPORT CSV ──
+/* ── EXPORT CSV ── */
 async function exportCSV(scope) {
   let q=sbClient.from(TABLE_NAME).select('data,prelievi,uscite,note,generato_il').order('data').order('id');
   if(scope==='month'){
     const first=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
-    const last=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear,activeMonth)}`;
+    const last =`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear,activeMonth)}`;
     q=q.gte('data',first).lte('data',last);
   }
   showToast('⏳ Preparazione…',3000);
   const {data,error}=await q;
   if(error){ showToast('⚠️ Errore export'); return; }
-  const header='Data,Giorno,Prelievi,Uscite,Note,Generato_il';
+  const hdr='Data,Giorno,Prelievi,Uscite,Note,Generato_il';
   const rows=(data||[]).map(r=>{
     const dw=DAYS_IT[new Date(r.data+'T00:00:00').getDay()];
-    return [r.data,dw,r.prelievi!=null?String(r.prelievi).replace('.',','):'',r.uscite!=null?String(r.uscite).replace('.',','):'',('"'+(r.note||'').replace(/"/g,'""')+'"'),r.generato_il||''].join(',');
+    return [r.data,dw,
+      r.prelievi!=null?String(r.prelievi).replace('.',','):'',
+      r.uscite!=null?String(r.uscite).replace('.',','):'',
+      '"'+(r.note||'').replace(/"/g,'""')+'"',
+      r.generato_il||''].join(',');
   });
-  const csv=[header,...rows].join('\r\n');
+  const csv=[hdr,...rows].join('\r\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download=scope==='month'?`spese_${MONTHS_IT[activeMonth].toLowerCase()}_${activeYear}.csv`:`spese_storici_${activeYear}.csv`;
-  a.click(); URL.revokeObjectURL(url);
-  showToast('✅ Export completato');
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url;
+  a.download=scope==='month'?`spese_${MONTHS_IT[activeMonth].toLowerCase()}_${activeYear}.csv`:`spese_storici_${activeYear}.csv`;
+  a.click(); URL.revokeObjectURL(url); showToast('✅ Export completato');
 }
 
 $('btn-export').addEventListener('click', ()=>$('export-modal').classList.add('open'));
@@ -439,7 +501,7 @@ $('exp-month').addEventListener('click',  ()=>{ $('export-modal').classList.remo
 $('exp-all').addEventListener('click',    ()=>{ $('export-modal').classList.remove('open'); exportCSV('all'); });
 $('export-modal').addEventListener('click',e=>{ if(e.target===$('export-modal')) $('export-modal').classList.remove('open'); });
 
-// ── START ──
+/* ── START ── */
 buildMonthTabs();
 loadMonthData();
 </script>
