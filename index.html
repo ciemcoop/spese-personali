@@ -4,325 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Spese Personali</title>
-
-  <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
-    /* ─── DESIGN TOKENS ─── */
     :root {
-      --bg:          #0f1117;
-      --surface:     #1a1d27;
-      --surface2:    #22263a;
-      --border:      #2e3350;
-      --accent:      #4f9cf9;
-      --accent-dim:  #1e3a5f;
-      --green:       #34d399;
-      --green-dim:   #0d3327;
-      --red:         #f87171;
-      --red-dim:     #3b1515;
-      --text:        #e2e8f0;
-      --text-muted:  #64748b;
-      --text-dim:    #94a3b8;
-      --radius:      10px;
-      --font-mono:   'SF Mono', 'Fira Code', 'Consolas', monospace;
-      --font-ui:     'Inter', system-ui, -apple-system, sans-serif;
+      --bg:         #0f1117;
+      --surface:    #1a1d27;
+      --surface2:   #22263a;
+      --border:     #2e3350;
+      --accent:     #4f9cf9;
+      --accent-dim: #1e3a5f;
+      --green:      #34d399;
+      --green-dim:  #0d3327;
+      --red:        #f87171;
+      --red-dim:    #3b1515;
+      --text:       #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim:   #94a3b8;
+      --font-mono:  'SF Mono','Fira Code','Consolas',monospace;
+      --font-ui:    'Inter',system-ui,-apple-system,sans-serif;
     }
-
-    /* ─── RESET ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-size: 15px; -webkit-font-smoothing: antialiased; }
 
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-ui);
-      font-size: 15px;
-      -webkit-font-smoothing: antialiased;
-    }
+    #app { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
 
-    /* ─── LAYOUT ─── */
-    #app {
-      display: flex;
-      flex-direction: column;
-      height: 100dvh;
-      overflow: hidden;
-    }
-
-    /* ─── CONFIG OVERLAY ─── */
-    #config-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 999;
-      padding: 20px;
-    }
-    #config-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px 28px;
-      max-width: 480px;
-      width: 100%;
-    }
-    #config-box h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
-    #config-box p  { color: var(--text-dim); font-size: 0.875rem; margin-bottom: 20px; line-height: 1.5; }
-    .cfg-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; margin-top: 14px; }
-    .cfg-input {
-      width: 100%; padding: 10px 12px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text);
-      font-family: var(--font-mono); font-size: 0.82rem;
-      outline: none; transition: border 0.15s;
-    }
-    .cfg-input:focus { border-color: var(--accent); }
-    #cfg-save {
-      margin-top: 22px; width: 100%; padding: 12px;
-      background: var(--accent); color: #fff;
-      font-weight: 700; font-size: 0.95rem;
-      border: none; border-radius: 8px; cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    #cfg-save:hover { opacity: 0.88; }
-    .cfg-note { margin-top: 14px; font-size: 0.78rem; color: var(--text-muted); text-align: center; }
-
-    /* ─── TOPBAR ─── */
-    #topbar {
-      flex-shrink: 0;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 16px 0;
-    }
-    #topbar-row1 {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    #app-title {
-      font-size: 1rem; font-weight: 700; letter-spacing: -0.01em;
-    }
+    /* TOPBAR */
+    #topbar { flex-shrink: 0; background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px 0; }
+    #topbar-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    #app-title { font-size: 1rem; font-weight: 700; }
     #topbar-actions { display: flex; gap: 8px; }
-
-    .icon-btn {
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text-dim); border-radius: 7px;
-      padding: 6px 10px; font-size: 0.78rem; cursor: pointer;
-      display: flex; align-items: center; gap: 5px;
-      white-space: nowrap; transition: all 0.15s;
-    }
+    .icon-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); border-radius: 7px; padding: 6px 10px; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: all 0.15s; }
     .icon-btn:hover { background: var(--border); color: var(--text); }
     .icon-btn svg { width: 14px; height: 14px; }
 
-    /* ─── MONTH TABS ─── */
-    #month-tabs {
-      display: flex; gap: 4px;
-      overflow-x: auto; padding-bottom: 0;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      scroll-behavior: smooth;
-    }
+    /* MONTH TABS */
+    #month-tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
     #month-tabs::-webkit-scrollbar { display: none; }
-
-    .month-tab {
-      flex-shrink: 0;
-      padding: 8px 14px;
-      border-radius: 8px 8px 0 0;
-      font-size: 0.8rem; font-weight: 600;
-      color: var(--text-muted); cursor: pointer;
-      border: 1px solid transparent;
-      border-bottom: none;
-      transition: all 0.15s;
-      white-space: nowrap;
-      background: transparent;
-    }
+    .month-tab { flex-shrink: 0; padding: 8px 14px; border-radius: 8px 8px 0 0; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border: 1px solid transparent; border-bottom: none; transition: all 0.15s; white-space: nowrap; background: transparent; }
     .month-tab:hover { color: var(--text); background: var(--surface2); }
-    .month-tab.active {
-      color: var(--accent);
-      background: var(--bg);
-      border-color: var(--border);
-    }
+    .month-tab.active { color: var(--accent); background: var(--bg); border-color: var(--border); }
 
-    /* ─── TABLE AREA ─── */
-    #table-area {
-      flex: 1; overflow: hidden;
-      display: flex; flex-direction: column;
-    }
-
-    /* ─── STICKY HEADER ─── */
-    #grid-header {
-      flex-shrink: 0;
-      display: grid;
-      grid-template-columns: 44px 1fr 1fr 2fr;
-      gap: 0;
-      background: var(--surface2);
-      border-bottom: 2px solid var(--border);
-      padding: 0 8px;
-    }
-    .gh-cell {
-      padding: 9px 6px;
-      font-size: 0.68rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--text-muted);
-    }
+    /* TABLE */
+    #table-area { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    #grid-header { flex-shrink: 0; display: grid; grid-template-columns: 48px 1fr 1fr 2fr 32px; background: var(--surface2); border-bottom: 2px solid var(--border); padding: 0 8px; }
+    .gh-cell { padding: 9px 6px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
     .gh-cell.num { text-align: right; }
+    #grid-scroll { flex: 1; overflow-y: auto; padding: 0 8px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
-    /* ─── SCROLL CONTAINER ─── */
-    #grid-scroll {
-      flex: 1; overflow-y: auto;
-      padding: 0 8px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border) transparent;
-    }
+    /* DAY BLOCK */
+    .day-block { border-bottom: 2px solid var(--border); }
+    .day-block.today { background: rgba(79,156,249,0.04); }
 
-    /* ─── DAY ROWS ─── */
-    .day-row {
-      display: grid;
-      grid-template-columns: 44px 1fr 1fr 2fr;
-      gap: 0;
-      border-bottom: 1px solid var(--border);
-      align-items: center;
-      min-height: 46px;
-      transition: background 0.1s;
-    }
-    .day-row:hover { background: rgba(255,255,255,0.02); }
-    .day-row.today { background: rgba(79,156,249,0.06); }
-    .day-row.weekend .day-label { color: var(--text-muted); }
-    .day-row.has-data { }
+    /* SINGOLA RIGA SPESA */
+    .entry-row { display: grid; grid-template-columns: 48px 1fr 1fr 2fr 32px; align-items: center; min-height: 44px; border-bottom: 1px solid rgba(46,51,80,0.5); transition: background 0.1s; }
+    .entry-row:last-child { border-bottom: none; }
+    .entry-row:hover { background: rgba(255,255,255,0.02); }
 
-    .day-label {
-      padding: 4px 6px;
-      font-size: 0.75rem; font-weight: 600;
-      color: var(--text-dim);
-      display: flex; flex-direction: column; align-items: center;
-      line-height: 1.2;
-    }
-    .day-label .dn  { font-size: 1rem; font-weight: 700; color: var(--text); }
-    .day-label .dw  { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
-    .day-row.today .day-label .dn { color: var(--accent); }
+    /* la data appare solo sulla prima riga del giorno */
+    .day-label { padding: 4px 6px; font-size: 0.75rem; font-weight: 600; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
+    .day-label .dn { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .day-label .dw { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+    .day-block.today .day-label .dn { color: var(--accent); }
+    .day-label.empty { } /* placeholder vuoto per righe successive */
 
-    /* ─── INLINE INPUTS ─── */
-    .cell-input {
-      width: 100%; padding: 7px 6px;
-      background: transparent; border: none;
-      border-left: 1px solid var(--border);
-      color: var(--text); font-family: var(--font-mono);
-      font-size: 0.82rem; outline: none;
-      transition: background 0.15s;
-      min-height: 46px;
-    }
+    /* INPUTS */
+    .cell-input { width: 100%; padding: 7px 6px; background: transparent; border: none; border-left: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 0.82rem; outline: none; transition: background 0.15s; min-height: 44px; }
     .cell-input::placeholder { color: var(--text-muted); opacity: 0.5; }
-    .cell-input:focus {
-      background: var(--accent-dim);
-      outline: none;
-    }
+    .cell-input:focus { background: var(--accent-dim); }
     .cell-input.money { text-align: right; }
     .cell-input.entrate:focus { background: var(--green-dim); }
     .cell-input.uscite:focus  { background: var(--red-dim); }
-
-    /* filled state */
     .cell-input.filled-green { color: var(--green); }
     .cell-input.filled-red   { color: var(--red); }
 
-    /* saving indicator */
-    .cell-input.saving { opacity: 0.6; }
+    /* PULSANTE + e - */
+    .btn-add-row { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--accent); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: all 0.15s; line-height: 1; }
+    .btn-add-row:hover { background: var(--accent-dim); border-color: var(--accent); }
+    .btn-del-row { width: 22px; height: 22px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: var(--text-muted); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: all 0.15s; line-height: 1; }
+    .btn-del-row:hover { background: var(--red-dim); color: var(--red); border-color: var(--red); }
+    /* il + appare solo sull'ultima riga del giorno */
+    .action-cell { display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--border); }
 
-    /* ─── BOTTOM TOTALS ─── */
-    #totals-bar {
-      flex-shrink: 0;
-      background: var(--surface);
-      border-top: 2px solid var(--border);
-      padding: 10px 16px;
-      display: flex; gap: 12px; flex-wrap: wrap;
-      align-items: center; justify-content: space-between;
-    }
-    .tot-group {
-      display: flex; flex-direction: column; align-items: center;
-      min-width: 80px;
-    }
+    /* TOTALS */
+    #totals-bar { flex-shrink: 0; background: var(--surface); border-top: 2px solid var(--border); padding: 10px 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .tot-group { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
     .tot-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
     .tot-value { font-size: 1.05rem; font-weight: 700; font-family: var(--font-mono); margin-top: 2px; }
     .tot-value.green  { color: var(--green); }
     .tot-value.red    { color: var(--red); }
     .tot-value.accent { color: var(--accent); }
-    .tot-value.neutral { color: var(--text); }
+    #status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-left: auto; flex-shrink: 0; transition: background 0.3s; }
+    #status-dot.saving { background: #fbbf24; }
+    #status-dot.error  { background: var(--red); }
 
-    #status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--green); margin-left: auto;
-      flex-shrink: 0; transition: background 0.3s;
-    }
-    #status-dot.saving  { background: #fbbf24; }
-    #status-dot.error   { background: var(--red); }
-    #status-dot.offline { background: var(--text-muted); }
-
-    /* ─── TOAST ─── */
-    #toast {
-      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); padding: 10px 18px;
-      border-radius: 24px; font-size: 0.82rem;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s; z-index: 100;
-      white-space: nowrap;
-    }
+    /* TOAST */
+    #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 24px; font-size: 0.82rem; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 100; white-space: nowrap; }
     #toast.show { opacity: 1; }
 
-    /* ─── RESPONSIVE (mobile tweaks) ─── */
-    @media (max-width: 480px) {
-      #grid-header, .day-row {
-        grid-template-columns: 38px 80px 80px 1fr;
-      }
-      .cell-input { font-size: 0.78rem; padding: 6px 4px; }
-      .gh-cell    { font-size: 0.62rem; padding: 8px 4px; }
-      .day-label .dn { font-size: 0.9rem; }
-    }
-
-    /* ─── EXPORT MODAL ─── */
-    #export-modal {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.7);
-      display: none; align-items: center; justify-content: center;
-      padding: 20px;
-    }
+    /* EXPORT MODAL */
+    #export-modal { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; padding: 20px; }
     #export-modal.open { display: flex; }
-    #export-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 14px; padding: 26px 24px;
-      max-width: 360px; width: 100%;
-    }
+    #export-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 26px 24px; max-width: 360px; width: 100%; }
     #export-box h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; }
-    .exp-btn {
-      width: 100%; padding: 11px;
-      margin-bottom: 8px;
-      border: 1px solid var(--border); border-radius: 8px;
-      background: var(--surface2); color: var(--text);
-      font-size: 0.9rem; cursor: pointer; text-align: left;
-      transition: all 0.15s;
-    }
+    .exp-btn { width: 100%; padding: 11px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface2); color: var(--text); font-size: 0.9rem; cursor: pointer; text-align: left; transition: all 0.15s; }
     .exp-btn:hover { background: var(--border); }
-    .exp-close {
-      width: 100%; padding: 9px; border: none;
-      background: transparent; color: var(--text-muted);
-      font-size: 0.85rem; cursor: pointer; margin-top: 4px;
+    .exp-close { width: 100%; padding: 9px; border: none; background: transparent; color: var(--text-muted); font-size: 0.85rem; cursor: pointer; margin-top: 4px; }
+
+    @media (max-width: 480px) {
+      #grid-header, .entry-row { grid-template-columns: 38px 75px 75px 1fr 28px; }
+      .cell-input { font-size: 0.78rem; padding: 6px 4px; }
+      .gh-cell { font-size: 0.62rem; padding: 8px 4px; }
+      .day-label .dn { font-size: 0.9rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- ═══ CONFIG OVERLAY ═══ -->
-<div id="config-overlay">
-  <div id="config-box">
-    <h2>⚙️ Configurazione Supabase</h2>
-    <p>Inserisci le credenziali del tuo progetto Supabase. Verranno salvate localmente nel browser.</p>
-    <label class="cfg-label" for="cfg-url">Project URL</label>
-    <input class="cfg-input" id="cfg-url" type="text" placeholder="https://xxxx.supabase.co" autocomplete="off" />
-    <label class="cfg-label" for="cfg-key">Anon / Public Key</label>
-    <input class="cfg-input" id="cfg-key" type="text" placeholder="eyJ..." autocomplete="off" />
-    <button id="cfg-save">Connetti →</button>
-    <p class="cfg-note">Le credenziali rimangono solo nel tuo browser (localStorage). Non vengono inviate altrove.</p>
-  </div>
-</div>
-
-<!-- ═══ EXPORT MODAL ═══ -->
 <div id="export-modal">
   <div id="export-box">
     <h3>📤 Esporta dati</h3>
@@ -332,13 +129,9 @@
   </div>
 </div>
 
-<!-- ═══ TOAST ═══ -->
 <div id="toast"></div>
 
-<!-- ═══ APP ═══ -->
 <div id="app">
-
-  <!-- TOPBAR -->
   <div id="topbar">
     <div id="topbar-row1">
       <span id="app-title">💰 Spese Personali</span>
@@ -347,33 +140,22 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           Esporta
         </button>
-        <button class="icon-btn" id="btn-settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        </button>
       </div>
     </div>
-
-    <!-- MONTH TABS -->
     <div id="month-tabs"></div>
   </div>
 
-  <!-- TABLE AREA -->
   <div id="table-area">
-
-    <!-- STICKY COLUMN HEADERS -->
     <div id="grid-header">
       <div class="gh-cell">Giorno</div>
       <div class="gh-cell num">Prelievi €</div>
       <div class="gh-cell num">Uscite €</div>
       <div class="gh-cell">Note</div>
+      <div class="gh-cell"></div>
     </div>
-
-    <!-- SCROLLABLE ROWS -->
     <div id="grid-scroll"></div>
-
   </div>
 
-  <!-- TOTALS BAR -->
   <div id="totals-bar">
     <div class="tot-group">
       <span class="tot-label">Prelievi</span>
@@ -389,389 +171,277 @@
     </div>
     <div id="status-dot" title="Connesso"></div>
   </div>
-
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   SPESE PERSONALI — App Logic
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   SPESE PERSONALI — multi-riga per giorno
+   ═══════════════════════════════════════════════════ */
 
-// ─── COSTANTI ───
-const MONTHS_IT  = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-                    'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const MONTHS_IT  = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 const DAYS_IT    = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
 const TABLE_NAME = 'spese';
-const LS_URL_KEY = 'spese_sb_url';
-const LS_KEY_KEY = 'spese_sb_key';
+const SB_URL     = 'https://zzfbtzhvvknffkosunqe.supabase.co';
+const SB_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6ZmJ0emh2dmtuZmZrb3N1bnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDU5NDAsImV4cCI6MjA5MzEyMTk0MH0.rntb1fkpVDBc-B_V6kvZ4-Oukzl4efzZH1ga7aZLNhc';
 
-// ─── CREDENZIALI HARDCODATE ───
-const SB_URL = 'https://zzfbtzhvvknffkosunqe.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6ZmJ0emh2dmtuZmZrb3N1bnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDU5NDAsImV4cCI6MjA5MzEyMTk0MH0.rntb1fkpVDBc-B_V6kvZ4-Oukzl4efzZH1ga7aZLNhc';
+let sbClient    = null;
+let activeYear  = new Date().getFullYear();
+let activeMonth = new Date().getMonth();
+// monthData: { 'YYYY-MM-DD': [ {id, prelievi, uscite, note}, ... ] }
+let monthData   = {};
+let saveTimers  = {};
 
-// ─── STATE ───
-let sbClient   = null;          // client Supabase
-let activeYear = new Date().getFullYear();
-let activeMonth= new Date().getMonth();   // 0-based
-let monthData  = {};            // { 'YYYY-MM-DD': { prelievi, uscite, note } }
-let saveTimers = {};            // debounce timers per riga
-let statusOk   = true;
+// ── INIT ──
+sbClient = window.supabase.createClient(SB_URL, SB_KEY);
 
-// ─── SUPABASE INIT ───
-function initSupabase(url, key) {
-  sbClient = window.supabase.createClient(url, key);
+const $   = id => document.getElementById(id);
+const fmt = n  => (!n && n !== 0) ? '' : n.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2});
+const parseNum = s => { if (!s || s.trim()==='') return null; return parseFloat(s.replace(',','.')) || null; };
+const toDateStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const daysInMonth = (y,m) => new Date(y, m+1, 0).getDate();
+const uid = () => Math.random().toString(36).slice(2,10); // id locale temporaneo
+
+function showToast(msg, dur=2000) {
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+function setStatus(s) {
+  const d=$('status-dot'); d.className='';
+  if(s==='saving') { d.classList.add('saving'); d.title='Salvataggio...'; }
+  else if(s==='error') { d.classList.add('error'); d.title='Errore'; }
+  else { d.title='Connesso'; }
 }
 
-// ─── DOM HELPERS ───
-const $  = id => document.getElementById(id);
-const fmt = n  => {
-  if (!n && n !== 0) return '';
-  return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-};
-const parseNum = s => {
-  if (!s || s.trim() === '') return null;
-  // accetta virgola o punto come decimale
-  return parseFloat(s.replace(',', '.')) || null;
-};
-
-function showToast(msg, duration = 2000) {
-  const t = $('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), duration);
-}
-
-function setStatus(state) {
-  const dot = $('status-dot');
-  dot.className = '';
-  if (state === 'saving')  { dot.classList.add('saving');  dot.title = 'Salvataggio...'; }
-  else if (state === 'ok') {                                dot.title = 'Connesso'; }
-  else if (state === 'error') { dot.classList.add('error'); dot.title = 'Errore di connessione'; }
-}
-
-// ─── CONFIGURAZIONE ───
-function loadConfig() {
-  // Credenziali hardcodate — nessun popup necessario
-  initSupabase(SB_URL, SB_KEY);
-  $('config-overlay').style.display = 'none';
-  buildMonthTabs();
-  loadMonthData();
-}
-
-function hideConfigOverlay() {
-  $('config-overlay').style.display = 'none';
-  buildMonthTabs();
-  loadMonthData();
-}
-
-$('cfg-save').addEventListener('click', () => {
-  const url = $('cfg-url').value.trim();
-  const key = $('cfg-key').value.trim();
-  if (!url || !key) { showToast('⚠️ Inserisci URL e Key'); return; }
-  initSupabase(url, key);
-  hideConfigOverlay();
-  showToast('✅ Connesso a Supabase');
-});
-
-$('btn-settings').addEventListener('click', () => {
-  $('config-overlay').style.display = 'flex';
-});
-
-// ─── MONTH TABS ───
+// ── MONTH TABS ──
 function buildMonthTabs() {
-  const container = $('month-tabs');
-  container.innerHTML = '';
-  MONTHS_IT.forEach((m, i) => {
-    const tab = document.createElement('button');
-    tab.className = 'month-tab' + (i === activeMonth ? ' active' : '');
-    tab.textContent = m;
-    tab.dataset.month = i;
-    tab.addEventListener('click', () => switchMonth(i));
-    container.appendChild(tab);
+  const c=$('month-tabs'); c.innerHTML='';
+  MONTHS_IT.forEach((m,i)=>{
+    const t=document.createElement('button');
+    t.className='month-tab'+(i===activeMonth?' active':'');
+    t.textContent=m; t.dataset.month=i;
+    t.addEventListener('click',()=>switchMonth(i));
+    c.appendChild(t);
   });
-  // scroll to active tab
-  setTimeout(() => {
-    const active = container.querySelector('.active');
-    if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }, 50);
+  setTimeout(()=>{ const a=c.querySelector('.active'); if(a) a.scrollIntoView({inline:'center',block:'nearest'}); },50);
 }
-
-function switchMonth(monthIndex) {
-  activeMonth = monthIndex;
-  document.querySelectorAll('.month-tab').forEach(t => {
-    t.classList.toggle('active', +t.dataset.month === monthIndex);
-  });
-  const active = document.querySelector('.month-tab.active');
-  if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+function switchMonth(i) {
+  activeMonth=i;
+  document.querySelectorAll('.month-tab').forEach(t=>t.classList.toggle('active',+t.dataset.month===i));
+  const a=document.querySelector('.month-tab.active'); if(a) a.scrollIntoView({inline:'center',block:'nearest'});
   loadMonthData();
 }
 
-// ─── DATA LOADING ───
+// ── LOAD DATA ──
 async function loadMonthData() {
-  monthData = {};
-  renderGrid(); // mostra subito la griglia vuota
-
-  if (!sbClient) return;
-
-  const firstDay = `${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
-  const lastDay  = `${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear, activeMonth)}`;
-
+  monthData={};
+  renderGrid();
+  const first=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
+  const last =`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear,activeMonth)}`;
   try {
-    const { data, error } = await sbClient
-      .from(TABLE_NAME)
-      .select('data, prelievi, uscite, note')
-      .gte('data', firstDay)
-      .lte('data', lastDay);
-
-    if (error) throw error;
-
-    // indicizza per data
-    (data || []).forEach(row => {
-      monthData[row.data] = {
-        prelievi: row.prelievi,
-        uscite:   row.uscite,
-        note:     row.note || ''
-      };
+    const {data,error}=await sbClient.from(TABLE_NAME).select('id,data,prelievi,uscite,note').gte('data',first).lte('data',last).order('data').order('id');
+    if(error) throw error;
+    (data||[]).forEach(row=>{
+      if(!monthData[row.data]) monthData[row.data]=[];
+      monthData[row.data].push({id:row.id, prelievi:row.prelievi, uscite:row.uscite, note:row.note||''});
     });
-
     renderGrid();
     setStatus('ok');
-  } catch(e) {
-    console.error(e);
-    setStatus('error');
-    showToast('⚠️ Errore caricamento dati');
-  }
+  } catch(e) { console.error(e); setStatus('error'); showToast('⚠️ Errore caricamento'); }
 }
 
-// ─── DAYS IN MONTH ───
-function daysInMonth(y, m) {
-  return new Date(y, m + 1, 0).getDate();
-}
-
-// ─── RENDER GRID ───
+// ── RENDER ──
 function renderGrid() {
-  const scroll   = $('grid-scroll');
-  const today    = new Date();
-  const todayStr = toDateStr(today);
-  const days     = daysInMonth(activeYear, activeMonth);
-  const rows     = [];
+  const scroll=$('grid-scroll');
+  const today=new Date(); const todayStr=toDateStr(today);
+  const days=daysInMonth(activeYear,activeMonth);
+  const blocks=[];
 
-  for (let d = 1; d <= days; d++) {
-    const date     = new Date(activeYear, activeMonth, d);
-    const dateStr  = toDateStr(date);
-    const dow      = date.getDay();          // 0=Dom, 6=Sab
-    const isWeekend= dow === 0 || dow === 6;
-    const isToday  = dateStr === todayStr;
-    const rowData  = monthData[dateStr] || {};
+  for(let d=1;d<=days;d++){
+    const date=new Date(activeYear,activeMonth,d);
+    const dateStr=toDateStr(date);
+    const dow=date.getDay();
+    const isToday=dateStr===todayStr;
+    const rows=monthData[dateStr]||[{id:'new_'+uid(), prelievi:null, uscite:null, note:''}];
 
-    const prelievi = rowData.prelievi != null ? fmt(rowData.prelievi) : '';
-    const uscite   = rowData.uscite   != null ? fmt(rowData.uscite)   : '';
-    const note     = rowData.note || '';
+    let rowsHtml='';
+    rows.forEach((row,ri)=>{
+      const isFirst=ri===0;
+      const isLast=ri===rows.length-1;
+      const p=row.prelievi!=null?fmt(row.prelievi):'';
+      const u=row.uscite!=null?fmt(row.uscite):'';
+      const n=row.note||'';
 
-    rows.push(`
-      <div class="day-row${isToday ? ' today' : ''}${isWeekend ? ' weekend' : ''}" data-date="${dateStr}">
-        <div class="day-label">
-          <span class="dn">${d}</span>
-          <span class="dw">${DAYS_IT[dow]}</span>
-        </div>
-        <input class="cell-input money entrate${prelievi ? ' filled-green' : ''}"
-               data-field="prelievi" data-date="${dateStr}"
-               type="text" inputmode="decimal"
-               placeholder="0,00" value="${prelievi}" />
-        <input class="cell-input money uscite${uscite ? ' filled-red' : ''}"
-               data-field="uscite" data-date="${dateStr}"
-               type="text" inputmode="decimal"
-               placeholder="0,00" value="${uscite}" />
-        <input class="cell-input note"
-               data-field="note" data-date="${dateStr}"
-               type="text" inputmode="text"
-               placeholder="Descrizione…" value="${escHtml(note)}" />
-      </div>
-    `);
+      const dayCell=isFirst
+        ? `<div class="day-label"><span class="dn">${d}</span><span class="dw">${DAYS_IT[dow]}</span></div>`
+        : `<div class="day-label"></div>`;
+
+      const actionCell=isLast
+        ? `<div class="action-cell"><button class="btn-add-row" data-date="${dateStr}" title="Aggiungi riga">+</button></div>`
+        : `<div class="action-cell"><button class="btn-del-row" data-date="${dateStr}" data-rowid="${row.id}" title="Elimina riga">×</button></div>`;
+
+      rowsHtml+=`
+        <div class="entry-row" data-date="${dateStr}" data-rowid="${row.id}">
+          ${dayCell}
+          <input class="cell-input money entrate${p?' filled-green':''}" data-field="prelievi" data-date="${dateStr}" data-rowid="${row.id}" type="text" inputmode="decimal" placeholder="0,00" value="${p}"/>
+          <input class="cell-input money uscite${u?' filled-red':''}"   data-field="uscite"   data-date="${dateStr}" data-rowid="${row.id}" type="text" inputmode="decimal" placeholder="0,00" value="${u}"/>
+          <input class="cell-input note"                                  data-field="note"     data-date="${dateStr}" data-rowid="${row.id}" type="text" inputmode="text"    placeholder="Descrizione…" value="${escHtml(n)}"/>
+          ${actionCell}
+        </div>`;
+    });
+
+    blocks.push(`<div class="day-block${isToday?' today':''}" data-date="${dateStr}">${rowsHtml}</div>`);
   }
 
-  scroll.innerHTML = rows.join('');
+  scroll.innerHTML=blocks.join('');
 
-  // attach events
-  scroll.querySelectorAll('.cell-input').forEach(inp => {
-    inp.addEventListener('input',  onCellInput);
-    inp.addEventListener('blur',   onCellBlur);
+  // eventi input
+  scroll.querySelectorAll('.cell-input').forEach(inp=>{
+    inp.addEventListener('input', onCellInput);
+    inp.addEventListener('blur',  onCellBlur);
     inp.addEventListener('keydown', onCellKeydown);
   });
+  // pulsante +
+  scroll.querySelectorAll('.btn-add-row').forEach(btn=>{
+    btn.addEventListener('click', e=>addRow(e.currentTarget.dataset.date));
+  });
+  // pulsante ×
+  scroll.querySelectorAll('.btn-del-row').forEach(btn=>{
+    btn.addEventListener('click', e=>delRow(e.currentTarget.dataset.date, e.currentTarget.dataset.rowid));
+  });
 
-  // scroll to today if current month
-  if (activeMonth === today.getMonth() && activeYear === today.getFullYear()) {
-    const todayRow = scroll.querySelector(`[data-date="${todayStr}"]`);
-    if (todayRow) setTimeout(() => todayRow.scrollIntoView({ block: 'center' }), 100);
+  if(activeMonth===today.getMonth()&&activeYear===today.getFullYear()){
+    const tr=scroll.querySelector(`[data-date="${todayStr}"]`);
+    if(tr) setTimeout(()=>tr.scrollIntoView({block:'center'}),100);
   }
-
   updateTotals();
 }
 
-function toDateStr(date) {
-  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+// ── ADD ROW ──
+function addRow(dateStr) {
+  if(!monthData[dateStr]) monthData[dateStr]=[];
+  monthData[dateStr].push({id:'new_'+uid(), prelievi:null, uscite:null, note:''});
+  renderGrid();
+  // focus sulla prima cella della nuova riga
+  const block=document.querySelector(`.day-block[data-date="${dateStr}"]`);
+  if(block){ const inputs=block.querySelectorAll('.cell-input'); if(inputs.length) inputs[inputs.length-3].focus(); }
 }
 
-function escHtml(s) {
-  return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-}
-
-// ─── INPUT HANDLERS ───
-function onCellInput(e) {
-  const inp   = e.target;
-  const date  = inp.dataset.date;
-  const field = inp.dataset.field;
-  const val   = inp.value;
-
-  // aggiorna colori live
-  if (field === 'prelievi') inp.classList.toggle('filled-green', val.trim() !== '');
-  if (field === 'uscite')   inp.classList.toggle('filled-red',   val.trim() !== '');
-
-  // aggiorna monthData locale
-  if (!monthData[date]) monthData[date] = {};
-  if (field === 'note') {
-    monthData[date].note = val;
+// ── DEL ROW ──
+async function delRow(dateStr, rowId) {
+  const rows=monthData[dateStr]||[];
+  if(rows.length<=1){
+    // se è l'unica riga, svuota invece di eliminare
+    rows[0]={...rows[0], prelievi:null, uscite:null, note:''};
+    if(!String(rowId).startsWith('new_')) await sbClient.from(TABLE_NAME).delete().eq('id', rowId);
+    monthData[dateStr]=[{id:'new_'+uid(), prelievi:null, uscite:null, note:''}];
   } else {
-    monthData[date][field] = parseNum(val);
+    monthData[dateStr]=rows.filter(r=>r.id!==rowId);
+    if(!String(rowId).startsWith('new_')){
+      try { await sbClient.from(TABLE_NAME).delete().eq('id', rowId); setStatus('ok'); }
+      catch(e){ setStatus('error'); showToast('⚠️ Errore eliminazione'); }
+    }
   }
-
+  renderGrid();
   updateTotals();
-
-  // debounce save (800ms)
-  clearTimeout(saveTimers[date]);
-  saveTimers[date] = setTimeout(() => saveRow(date), 800);
 }
 
+// ── INPUT HANDLERS ──
+function onCellInput(e) {
+  const inp=e.target, date=inp.dataset.date, field=inp.dataset.field, rowId=inp.dataset.rowid, val=inp.value;
+  if(field==='prelievi') inp.classList.toggle('filled-green', val.trim()!=='');
+  if(field==='uscite')   inp.classList.toggle('filled-red',   val.trim()!=='');
+  const rows=monthData[date]||[]; const row=rows.find(r=>r.id===rowId);
+  if(row){ if(field==='note') row.note=val; else row[field]=parseNum(val); }
+  updateTotals();
+  clearTimeout(saveTimers[rowId]);
+  saveTimers[rowId]=setTimeout(()=>saveRow(date,rowId),800);
+}
 function onCellBlur(e) {
-  const inp   = e.target;
-  const date  = inp.dataset.date;
-  const field = inp.dataset.field;
-
-  // formatta i numeri all'uscita dal campo
-  if (field !== 'note') {
-    const n = parseNum(inp.value);
-    inp.value = n != null ? fmt(n) : '';
-  }
-
-  // salva immediatamente al blur
-  clearTimeout(saveTimers[date]);
-  saveRow(date);
+  const inp=e.target, date=inp.dataset.date, field=inp.dataset.field, rowId=inp.dataset.rowid;
+  if(field!=='note'){ const n=parseNum(inp.value); inp.value=n!=null?fmt(n):''; }
+  clearTimeout(saveTimers[rowId]);
+  saveRow(date,rowId);
 }
-
-// Tab navigation tra celle
 function onCellKeydown(e) {
-  if (e.key === 'Enter' || e.key === 'Tab') {
+  if(e.key==='Enter'||e.key==='Tab'){
     e.preventDefault();
-    const inputs = Array.from(document.querySelectorAll('.cell-input'));
-    const idx    = inputs.indexOf(e.target);
-    const next   = inputs[idx + (e.shiftKey ? -1 : 1)];
-    if (next) { next.focus(); next.select(); }
+    const inputs=Array.from(document.querySelectorAll('.cell-input'));
+    const idx=inputs.indexOf(e.target);
+    const next=inputs[idx+(e.shiftKey?-1:1)];
+    if(next){ next.focus(); next.select(); }
   }
 }
 
-// ─── SAVE ROW ───
-async function saveRow(date) {
-  if (!sbClient) return;
-
-  const row = monthData[date] || {};
-  // non salvare se la riga è vuota
-  if (row.prelievi == null && row.uscite == null && (!row.note || row.note.trim() === '')) return;
-
+// ── SAVE ROW ──
+async function saveRow(dateStr, rowId) {
+  const rows=monthData[dateStr]||[]; const row=rows.find(r=>r.id===rowId);
+  if(!row) return;
+  if(row.prelievi==null&&row.uscite==null&&(!row.note||row.note.trim()==='')) return;
   setStatus('saving');
-
-  const payload = {
-    data:      date,
-    prelievi:  row.prelievi  ?? null,
-    uscite:    row.uscite    ?? null,
-    note:      row.note?.trim() || null,
-    generato_il: new Date().toISOString()
-  };
-
+  const payload={ data:dateStr, prelievi:row.prelievi??null, uscite:row.uscite??null, note:row.note?.trim()||null, generato_il:new Date().toISOString() };
   try {
-    const { error } = await sbClient
-      .from(TABLE_NAME)
-      .upsert(payload, { onConflict: 'data' });
-
-    if (error) throw error;
+    if(String(rowId).startsWith('new_')){
+      // INSERT
+      const {data,error}=await sbClient.from(TABLE_NAME).insert(payload).select('id').single();
+      if(error) throw error;
+      row.id=data.id; // aggiorna id locale con quello reale
+      // aggiorna anche il DOM
+      document.querySelectorAll(`[data-rowid="${rowId}"]`).forEach(el=>el.dataset.rowid=data.id);
+    } else {
+      // UPDATE
+      const {error}=await sbClient.from(TABLE_NAME).update(payload).eq('id', rowId);
+      if(error) throw error;
+    }
     setStatus('ok');
-  } catch(e) {
-    console.error('Save error:', e);
-    setStatus('error');
-    showToast('⚠️ Errore salvataggio');
-  }
+  } catch(e){ console.error(e); setStatus('error'); showToast('⚠️ Errore salvataggio'); }
 }
 
-// ─── TOTALI ───
+// ── TOTALI ──
 function updateTotals() {
-  let totP = 0, totU = 0;
-  Object.values(monthData).forEach(r => {
-    totP += r.prelievi || 0;
-    totU += r.uscite   || 0;
-  });
-  const bil = totP - totU;
-  $('tot-prelievi').textContent = '€ ' + fmt(totP);
-  $('tot-uscite').textContent   = '€ ' + fmt(totU);
-  const bilEl = $('tot-bilancio');
-  bilEl.textContent = '€ ' + fmt(bil);
-  bilEl.className   = 'tot-value ' + (bil >= 0 ? 'green' : 'red');
+  let totP=0, totU=0;
+  Object.values(monthData).forEach(rows=>rows.forEach(r=>{ totP+=r.prelievi||0; totU+=r.uscite||0; }));
+  const bil=totP-totU;
+  $('tot-prelievi').textContent='€ '+fmt(totP);
+  $('tot-uscite').textContent='€ '+fmt(totU);
+  const b=$('tot-bilancio'); b.textContent='€ '+fmt(bil); b.className='tot-value '+(bil>=0?'green':'red');
 }
 
-// ─── EXPORT CSV ───
+// ── EXPORT CSV ──
 async function exportCSV(scope) {
-  if (!sbClient) { showToast('⚠️ Configura Supabase prima'); return; }
-
-  let query = sbClient.from(TABLE_NAME).select('data, prelievi, uscite, note, generato_il').order('data');
-
-  if (scope === 'month') {
-    const first = `${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
-    const last  = `${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear, activeMonth)}`;
-    query = query.gte('data', first).lte('data', last);
+  let q=sbClient.from(TABLE_NAME).select('data,prelievi,uscite,note,generato_il').order('data').order('id');
+  if(scope==='month'){
+    const first=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
+    const last=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${daysInMonth(activeYear,activeMonth)}`;
+    q=q.gte('data',first).lte('data',last);
   }
-
-  showToast('⏳ Preparazione export…', 3000);
-
-  const { data, error } = await query;
-  if (error) { showToast('⚠️ Errore export'); return; }
-
-  const header = 'Data,Giorno,Prelievi,Uscite,Note,Generato_il';
-  const rows   = (data || []).map(r => {
-    const d   = new Date(r.data + 'T00:00:00');
-    const dow = DAYS_IT[d.getDay()];
-    return [
-      r.data,
-      dow,
-      r.prelievi != null ? String(r.prelievi).replace('.',',') : '',
-      r.uscite   != null ? String(r.uscite).replace('.',',')   : '',
-      '"' + (r.note || '').replace(/"/g,'""') + '"',
-      r.generato_il || ''
-    ].join(',');
+  showToast('⏳ Preparazione…',3000);
+  const {data,error}=await q;
+  if(error){ showToast('⚠️ Errore export'); return; }
+  const header='Data,Giorno,Prelievi,Uscite,Note,Generato_il';
+  const rows=(data||[]).map(r=>{
+    const dw=DAYS_IT[new Date(r.data+'T00:00:00').getDay()];
+    return [r.data,dw,r.prelievi!=null?String(r.prelievi).replace('.',','):'',r.uscite!=null?String(r.uscite).replace('.',','):'',('"'+(r.note||'').replace(/"/g,'""')+'"'),r.generato_il||''].join(',');
   });
-
-  const csv  = [header, ...rows].join('\r\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  const name = scope === 'month'
-    ? `spese_${MONTHS_IT[activeMonth].toLowerCase()}_${activeYear}.csv`
-    : `spese_storici_${activeYear}.csv`;
-  a.href = url; a.download = name; a.click();
-  URL.revokeObjectURL(url);
+  const csv=[header,...rows].join('\r\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=scope==='month'?`spese_${MONTHS_IT[activeMonth].toLowerCase()}_${activeYear}.csv`:`spese_storici_${activeYear}.csv`;
+  a.click(); URL.revokeObjectURL(url);
   showToast('✅ Export completato');
 }
 
-// ─── EXPORT MODAL WIRING ───
-$('btn-export').addEventListener('click',  () => $('export-modal').classList.add('open'));
-$('exp-cancel').addEventListener('click',  () => $('export-modal').classList.remove('open'));
-$('exp-month').addEventListener('click',   () => { $('export-modal').classList.remove('open'); exportCSV('month'); });
-$('exp-all').addEventListener('click',     () => { $('export-modal').classList.remove('open'); exportCSV('all'); });
+$('btn-export').addEventListener('click', ()=>$('export-modal').classList.add('open'));
+$('exp-cancel').addEventListener('click', ()=>$('export-modal').classList.remove('open'));
+$('exp-month').addEventListener('click',  ()=>{ $('export-modal').classList.remove('open'); exportCSV('month'); });
+$('exp-all').addEventListener('click',    ()=>{ $('export-modal').classList.remove('open'); exportCSV('all'); });
+$('export-modal').addEventListener('click',e=>{ if(e.target===$('export-modal')) $('export-modal').classList.remove('open'); });
 
-// chiudi modal cliccando fuori
-$('export-modal').addEventListener('click', e => {
-  if (e.target === $('export-modal')) $('export-modal').classList.remove('open');
-});
-
-// ─── START ───
-loadConfig();
+// ── START ──
+buildMonthTabs();
+loadMonthData();
 </script>
 </body>
 </html>
