@@ -273,8 +273,13 @@ async function delRow(ds,l){
   const rows=state[ds]||[];
   const row=rows.find(r=>r.lid===l);
   if(!row)return;
-  // aggiorna globale prima di cancellare
+  // SICUREZZA CRITICA: non eliminare mai senza un id numerico valido
   if(row.dbId){
+    if(typeof row.dbId!=='number'){
+      console.error('Blocked unsafe delete: invalid dbId',row.dbId);
+      toast('⚠️ Attendi il salvataggio prima di eliminare');
+      return;
+    }
     globalP-=row.prelievi||0;
     globalU-=row.uscite||0;
     try{
@@ -339,6 +344,8 @@ async function save(ds,l){
   // se riga è vuota MA esiste nel DB → cancella la riga dal DB
   if(empty){
     if(!row.dbId){row.dirty=false;return;}
+    // SICUREZZA: blocca delete con id non numerico
+    if(typeof row.dbId!=='number'){console.error('Blocked unsafe delete in save',row.dbId);row.dirty=false;return;}
     // esiste nel DB ma ora è vuota → elimina
     try{
       await sb.from(TABLE).delete().eq('id',row.dbId);
