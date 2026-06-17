@@ -250,6 +250,7 @@ function render(){
     i.addEventListener('input',onInput);
     i.addEventListener('blur',onBlur);
     i.addEventListener('keydown',onKey);
+    i.addEventListener('focus',()=>{ if('ontouchstart' in window) setTimeout(()=>i.select(),50); });
   });
   scroll.querySelectorAll('.btn-add-row').forEach(b=>b.addEventListener('click',e=>addRow(e.currentTarget.dataset.date)));
   scroll.querySelectorAll('.btn-del-row').forEach(b=>b.addEventListener('click',e=>delRow(e.currentTarget.dataset.date,e.currentTarget.dataset.lid)));
