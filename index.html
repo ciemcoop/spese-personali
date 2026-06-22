@@ -29,13 +29,13 @@
     .month-tab:hover{color:var(--text);background:var(--surface2)}
     .month-tab.active{color:var(--accent);background:var(--bg);border-color:var(--border)}
     #table-area{flex:1;overflow:hidden;display:flex;flex-direction:column}
-    #grid-header{flex-shrink:0;display:grid;grid-template-columns:48px 1fr 1fr 2fr 32px;background:var(--surface2);border-bottom:2px solid var(--border);padding:0 8px}
+    #grid-header{flex-shrink:0;display:grid;grid-template-columns:48px 1fr 1fr 1.6fr 36px 32px;background:var(--surface2);border-bottom:2px solid var(--border);padding:0 8px}
     .gh-cell{padding:9px 6px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
     .gh-cell.num{text-align:right}
     #grid-scroll{flex:1;overflow-y:auto;padding:0 8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
     .day-block{border-bottom:2px solid var(--border)}
     .day-block.today{background:rgba(79,156,249,.04)}
-    .entry-row{display:grid;grid-template-columns:48px 1fr 1fr 2fr 32px;align-items:center;min-height:44px;border-bottom:1px solid rgba(46,51,80,.5);transition:background .1s}
+    .entry-row{display:grid;grid-template-columns:48px 1fr 1fr 1.6fr 36px 32px;align-items:center;min-height:44px;border-bottom:1px solid rgba(46,51,80,.5);transition:background .1s}
     .entry-row:last-child{border-bottom:none}
     .entry-row:hover{background:rgba(255,255,255,.02)}
     .day-label{padding:4px 6px;font-size:.75rem;font-weight:600;color:var(--text-dim);display:flex;flex-direction:column;align-items:center;line-height:1.2}
@@ -55,6 +55,13 @@
     .btn-del-row{width:22px;height:22px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:auto;transition:all .15s}
     .btn-del-row:hover{background:var(--red-dim);color:var(--red);border-color:var(--red)}
     .action-cell{display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border)}
+    /* colonna luogo */
+    .loc-cell{display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border);min-height:44px}
+    .loc-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .loc-btn.has-loc{color:var(--accent);border-color:var(--accent-dim);background:var(--accent-dim)}
+    .loc-btn.loading{opacity:.5;animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+    .loc-btn:hover{background:var(--border)}
     #totals-bar{flex-shrink:0;background:var(--surface);border-top:2px solid var(--border);padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
     .tot-group{display:flex;flex-direction:column;align-items:center;min-width:72px}
     .tot-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
@@ -66,7 +73,7 @@
     #status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);margin-left:auto;flex-shrink:0;transition:background .3s}
     #status-dot.saving{background:#fbbf24}
     #status-dot.error{background:var(--red)}
-    #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:24px;font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:100;white-space:nowrap}
+    #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:24px;font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
     #toast.show{opacity:1}
     #export-modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
     #export-modal.open{display:flex}
@@ -75,12 +82,25 @@
     .exp-btn{width:100%;padding:11px;margin-bottom:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;cursor:pointer;text-align:left;transition:all .15s}
     .exp-btn:hover{background:var(--border)}
     .exp-close{width:100%;padding:9px;border:none;background:transparent;color:var(--text-muted);font-size:.85rem;cursor:pointer;margin-top:4px}
+    /* modal posizione */
+    #loc-modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
+    #loc-modal.open{display:flex}
+    #loc-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:340px;width:100%}
+    #loc-box h3{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+    #loc-box p{font-size:.85rem;color:var(--text-dim);line-height:1.5;margin-bottom:14px}
+    #loc-address{font-size:.85rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:14px;line-height:1.4}
+    #loc-map-link{display:block;text-align:center;font-size:.8rem;color:var(--accent);margin-bottom:14px;text-decoration:none}
+    .loc-actions{display:flex;gap:8px}
+    .loc-actions button{flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.85rem;cursor:pointer;transition:all .15s}
+    .loc-actions button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    .loc-actions button:hover{opacity:.9}
     @media(max-width:480px){
-      #grid-header,.entry-row{grid-template-columns:38px 72px 72px 1fr 28px}
-      .cell-input{font-size:.78rem;padding:6px 4px}
-      .gh-cell{font-size:.62rem;padding:8px 4px}
-      .day-label .dn{font-size:.9rem}
-      .tot-value{font-size:.85rem}
+      #grid-header,.entry-row{grid-template-columns:36px 64px 64px 1fr 32px 26px}
+      .cell-input{font-size:.76rem;padding:6px 3px}
+      .gh-cell{font-size:.6rem;padding:8px 3px}
+      .day-label .dn{font-size:.88rem}
+      .tot-value{font-size:.82rem}
+      .loc-btn{width:24px;height:24px;font-size:.78rem}
     }
   </style>
 </head>
@@ -91,6 +111,18 @@
   <button class="exp-btn" id="exp-all">📦 Tutti i dati storici (CSV)</button>
   <button class="exp-close" id="exp-cancel">Annulla</button>
 </div></div>
+
+<div id="loc-modal"><div id="loc-box">
+  <h3 id="loc-title">📍 Posizione rilevata</h3>
+  <p id="loc-desc">Vuoi salvare questa posizione per la spesa?</p>
+  <div id="loc-address">Caricamento…</div>
+  <a id="loc-map-link" href="#" target="_blank">🗺️ Apri su Google Maps</a>
+  <div class="loc-actions">
+    <button id="loc-cancel">Annulla</button>
+    <button class="primary" id="loc-confirm">Salva</button>
+  </div>
+</div></div>
+
 <div id="toast"></div>
 <div id="app">
   <div id="topbar">
@@ -111,6 +143,7 @@
       <div class="gh-cell num">Prelievi €</div>
       <div class="gh-cell num">Uscite €</div>
       <div class="gh-cell">Note</div>
+      <div class="gh-cell">📍</div>
       <div class="gh-cell"></div>
     </div>
     <div id="grid-scroll"></div>
@@ -124,9 +157,10 @@
     <div id="status-dot" title="Connesso"></div>
   </div>
 </div>
+
 <script>
 /* ═══════════════════════════════════════════════════
-   SPESE PERSONALI v4
+   SPESE PERSONALI v5 — con geolocalizzazione
    ═══════════════════════════════════════════════════ */
 const MONTHS_IT=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 const DAYS_IT=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
@@ -137,15 +171,17 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 let activeYear=new Date().getFullYear();
 let activeMonth=new Date().getMonth();
-// state: { [dateStr]: [ {lid, dbId, prelievi, uscite, note, dirty} ] }
+// state: { [dateStr]: [ {lid, dbId, prelievi, uscite, note, lat, lng, luogo, dirty} ] }
 let state={};
 let timers={};
 let seq=0;
-// saldo globale calcolato una volta sola e aggiornato incrementalmente
 let globalP=0, globalU=0;
 let globalLoaded=false;
-// flag per bloccare salvataggio durante navigazione
 let navigating=false;
+
+// per il modal posizione
+let pendingLocRow=null; // {ds, lid}
+let pendingLocCoords=null;
 
 const $=id=>document.getElementById(id);
 const lid=()=>'L'+(++seq);
@@ -155,7 +191,7 @@ const dateStr=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-$
 const dim=(y,m)=>new Date(y,m+1,0).getDate();
 const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
-function toast(msg,dur=2000){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+function toast(msg,dur=2500){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 function setDot(s){const d=$('status-dot');d.className='';if(s==='saving')d.classList.add('saving');else if(s==='error')d.classList.add('error');}
 
 /* ── TABS ── */
@@ -171,7 +207,7 @@ function buildTabs(){
   setTimeout(()=>{const a=c.querySelector('.active');if(a)a.scrollIntoView({inline:'center',block:'nearest'});},50);
 }
 function goMonth(i){
-  navigating=true; // blocca blur-save durante cambio mese
+  navigating=true;
   activeMonth=i;
   document.querySelectorAll('.month-tab').forEach(t=>t.classList.toggle('active',+t.dataset.month===i));
   const a=document.querySelector('.month-tab.active');if(a)a.scrollIntoView({inline:'center',block:'nearest'});
@@ -185,18 +221,17 @@ async function loadMonth(){
   const first=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
   const last=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${dim(activeYear,activeMonth)}`;
   try{
-    const {data,error}=await sb.from(TABLE).select('id,data,prelievi,uscite,note').gte('data',first).lte('data',last).order('data').order('id');
+    const {data,error}=await sb.from(TABLE).select('id,data,prelievi,uscite,note,lat,lng,luogo').gte('data',first).lte('data',last).order('data').order('id');
     if(error)throw error;
     (data||[]).forEach(r=>{
       if(!state[r.data])state[r.data]=[];
-      state[r.data].push({lid:lid(),dbId:r.id,prelievi:r.prelievi,uscite:r.uscite,note:r.note||'',dirty:false});
+      state[r.data].push({lid:lid(),dbId:r.id,prelievi:r.prelievi,uscite:r.uscite,note:r.note||'',lat:r.lat,lng:r.lng,luogo:r.luogo||'',dirty:false});
     });
     render();
     setDot('ok');
     navigating=false;
   }catch(e){console.error(e);setDot('error');toast('⚠️ Errore caricamento');}
 
-  // carica saldo globale una volta sola
   if(!globalLoaded) await loadGlobal();
   else renderTotals();
 }
@@ -224,22 +259,26 @@ function render(){
     const dow=dt.getDay();
     const isToday=ds===ts;
     const rows=state[ds]||[];
-    const disp=rows.length>0?rows:[{lid:'_e_'+ds,dbId:null,prelievi:null,uscite:null,note:'',dirty:false}];
+    const disp=rows.length>0?rows:[{lid:'_e_'+ds,dbId:null,prelievi:null,uscite:null,note:'',lat:null,lng:null,luogo:'',dirty:false}];
     const rowsH=disp.map((row,ri)=>{
       const isFirst=ri===0,isLast=ri===disp.length-1;
       const p=row.prelievi!=null?fmt(row.prelievi):'';
       const u=row.uscite!=null?fmt(row.uscite):'';
       const n=esc(row.note||'');
       const l=row.lid;
+      const hasLoc=row.lat!=null&&row.lng!=null;
       const dayC=isFirst?`<div class="day-label"><span class="dn">${d}</span><span class="dw">${DAYS_IT[dow]}</span></div>`:`<div class="day-label"></div>`;
       const actC=isLast
         ?`<div class="action-cell"><button class="btn-add-row" data-date="${ds}">+</button></div>`
         :`<div class="action-cell"><button class="btn-del-row" data-lid="${l}" data-date="${ds}">×</button></div>`;
+      const locTitle=hasLoc?esc(row.luogo||'Posizione salvata'):'Nessuna posizione — clicca per aggiungere';
+      const locC=`<div class="loc-cell"><button class="loc-btn${hasLoc?' has-loc':''}" data-lid="${l}" data-date="${ds}" title="${locTitle}">${hasLoc?'📍':'➕'}</button></div>`;
       return `<div class="entry-row" data-lid="${l}" data-date="${ds}">
         ${dayC}
         <input class="cell-input money entrate${p?' filled-green':''}" data-f="prelievi" data-lid="${l}" data-date="${ds}" type="text" inputmode="decimal" placeholder="0,00" value="${p}"/>
         <input class="cell-input money uscite${u?' filled-red':''}"   data-f="uscite"   data-lid="${l}" data-date="${ds}" type="text" inputmode="decimal" placeholder="0,00" value="${u}"/>
         <input class="cell-input note"                                  data-f="note"     data-lid="${l}" data-date="${ds}" type="text" inputmode="text"    placeholder="Descrizione…" value="${n}"/>
+        ${locC}
         ${actC}
       </div>`;
     }).join('');
@@ -254,6 +293,7 @@ function render(){
   });
   scroll.querySelectorAll('.btn-add-row').forEach(b=>b.addEventListener('click',e=>addRow(e.currentTarget.dataset.date)));
   scroll.querySelectorAll('.btn-del-row').forEach(b=>b.addEventListener('click',e=>delRow(e.currentTarget.dataset.date,e.currentTarget.dataset.lid)));
+  scroll.querySelectorAll('.loc-btn').forEach(b=>b.addEventListener('click',e=>openLocModal(e.currentTarget.dataset.date,e.currentTarget.dataset.lid)));
   if(activeMonth===today.getMonth()&&activeYear===today.getFullYear()){
     const tr=scroll.querySelector(`[data-date="${ts}"]`);
     if(tr)setTimeout(()=>tr.scrollIntoView({block:'center'}),100);
@@ -264,7 +304,7 @@ function render(){
 /* ── ADD / DEL ── */
 function addRow(ds){
   if(!state[ds])state[ds]=[];
-  state[ds].push({lid:lid(),dbId:null,prelievi:null,uscite:null,note:'',dirty:false});
+  state[ds].push({lid:lid(),dbId:null,prelievi:null,uscite:null,note:'',lat:null,lng:null,luogo:'',dirty:false});
   render();
   const block=document.querySelector(`.day-block[data-date="${ds}"]`);
   if(block){const rows=block.querySelectorAll('.entry-row');const last=rows[rows.length-1];if(last){const inp=last.querySelector('.cell-input');if(inp)inp.focus();}}
@@ -273,7 +313,6 @@ async function delRow(ds,l){
   const rows=state[ds]||[];
   const row=rows.find(r=>r.lid===l);
   if(!row)return;
-  // SICUREZZA CRITICA: non eliminare mai senza un id numerico valido
   if(row.dbId){
     if(typeof row.dbId!=='number'){
       console.error('Blocked unsafe delete: invalid dbId',row.dbId);
@@ -287,7 +326,6 @@ async function delRow(ds,l){
       if(error)throw error;
       setDot('ok');
     }catch(e){console.error(e);setDot('error');toast('⚠️ Errore eliminazione');
-      // ripristina globale se fallisce
       globalP+=row.prelievi||0;globalU+=row.uscite||0;return;}
   }
   state[ds]=rows.filter(r=>r.lid!==l);
@@ -301,21 +339,26 @@ function onInput(e){
   if(f==='uscite')  inp.classList.toggle('filled-red',  val.trim()!=='');
   if(!state[ds])state[ds]=[];
   let row=state[ds].find(r=>r.lid===l);
-  if(!row){row={lid:l,dbId:null,prelievi:null,uscite:null,note:'',dirty:false};state[ds].push(row);}
+  if(!row){row={lid:l,dbId:null,prelievi:null,uscite:null,note:'',lat:null,lng:null,luogo:'',dirty:false};state[ds].push(row);}
   const oldP=row.prelievi||0, oldU=row.uscite||0;
   if(f==='note') row.note=val;
   else row[f]=parseNum(val);
   row.dirty=true;
-  // aggiorna globale incrementalmente
   if(f==='prelievi'){globalP=globalP-oldP+(row.prelievi||0);}
   if(f==='uscite')  {globalU=globalU-oldU+(row.uscite||0);}
   renderTotals();
   clearTimeout(timers[l]);
   timers[l]=setTimeout(()=>save(ds,l),1000);
+
+  // se è il primo inserimento numerico su questa riga (prelievi o uscite) e non ha già una posizione,
+  // proponi automaticamente la geolocalizzazione, una sola volta per riga
+  if((f==='prelievi'||f==='uscite') && val.trim()!=='' && row.lat==null && !row._locAsked){
+    row._locAsked=true;
+    setTimeout(()=>autoRequestLocation(ds,l),600);
+  }
 }
 
 function onBlur(e){
-  // se stiamo navigando, non fare nulla
   if(navigating)return;
   const inp=e.target,f=inp.dataset.f,l=inp.dataset.lid,ds=inp.dataset.date;
   if(f!=='note'){const n=parseNum(inp.value);inp.value=n!=null?fmt(n):'';}
@@ -340,13 +383,9 @@ async function save(ds,l){
   const row=rows.find(r=>r.lid===l);
   if(!row)return;
   const empty=row.prelievi==null&&row.uscite==null&&(!row.note||!row.note.trim());
-  // se riga è vuota E non esiste nel DB → non salvare
-  // se riga è vuota MA esiste nel DB → cancella la riga dal DB
   if(empty){
     if(!row.dbId){row.dirty=false;return;}
-    // SICUREZZA: blocca delete con id non numerico
     if(typeof row.dbId!=='number'){console.error('Blocked unsafe delete in save',row.dbId);row.dirty=false;return;}
-    // esiste nel DB ma ora è vuota → elimina
     try{
       await sb.from(TABLE).delete().eq('id',row.dbId);
       row.dbId=null;row.dirty=false;setDot('ok');
@@ -354,7 +393,7 @@ async function save(ds,l){
     return;
   }
   setDot('saving');
-  const payload={data:ds,prelievi:row.prelievi??null,uscite:row.uscite??null,note:row.note||null,generato_il:new Date().toISOString()};
+  const payload={data:ds,prelievi:row.prelievi??null,uscite:row.uscite??null,note:row.note||null,lat:row.lat??null,lng:row.lng??null,luogo:row.luogo||null,generato_il:new Date().toISOString()};
   try{
     if(!row.dbId){
       const {data,error}=await sb.from(TABLE).insert(payload).select('id').single();
@@ -383,9 +422,93 @@ function renderTotals(){
   }
 }
 
+/* ════════════ GEOLOCALIZZAZIONE ════════════ */
+
+// chiamata automatica dopo aver scritto un importo — chiede il permesso GPS e apre il modal di conferma
+function autoRequestLocation(ds,l){
+  if(!('geolocation' in navigator)){return;}
+  const rows=state[ds]||[];
+  const row=rows.find(r=>r.lid===l);
+  if(!row||row.lat!=null)return; // già ha una posizione
+
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      pendingLocRow={ds,lid:l};
+      pendingLocCoords={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      showLocModal();
+    },
+    err=>{
+      // permesso negato o errore — non disturbare con popup di errore, fallisce silenziosamente
+      console.warn('Geolocation error:',err.message);
+    },
+    {enableHighAccuracy:true,timeout:8000,maximumAge:60000}
+  );
+}
+
+// click manuale sul pulsante 📍/➕
+function openLocModal(ds,l){
+  const rows=state[ds]||[];
+  const row=rows.find(r=>r.lid===l);
+  if(row&&row.lat!=null){
+    // ha già posizione: apri direttamente maps
+    window.open(`https://www.google.com/maps?q=${row.lat},${row.lng}`,'_blank');
+    return;
+  }
+  if(!('geolocation' in navigator)){toast('⚠️ Geolocalizzazione non supportata');return;}
+  toast('📍 Rilevamento posizione…',2000);
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      pendingLocRow={ds,lid:l};
+      pendingLocCoords={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      showLocModal();
+    },
+    err=>{ toast('⚠️ Posizione non disponibile: '+err.message); },
+    {enableHighAccuracy:true,timeout:8000,maximumAge:60000}
+  );
+}
+
+async function showLocModal(){
+  $('loc-modal').classList.add('open');
+  $('loc-address').textContent='Caricamento indirizzo…';
+  $('loc-map-link').href=`https://www.google.com/maps?q=${pendingLocCoords.lat},${pendingLocCoords.lng}`;
+  // geocoding inverso con Nominatim (OpenStreetMap, gratuito)
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pendingLocCoords.lat}&lon=${pendingLocCoords.lng}&zoom=18&addressdetails=1`,{headers:{'Accept-Language':'it'}});
+    const j=await r.json();
+    pendingLocCoords.address=j.display_name||`${pendingLocCoords.lat.toFixed(5)}, ${pendingLocCoords.lng.toFixed(5)}`;
+    $('loc-address').textContent=pendingLocCoords.address;
+  }catch(e){
+    console.error(e);
+    pendingLocCoords.address=`${pendingLocCoords.lat.toFixed(5)}, ${pendingLocCoords.lng.toFixed(5)}`;
+    $('loc-address').textContent=pendingLocCoords.address+' (indirizzo non disponibile)';
+  }
+}
+
+$('loc-cancel').addEventListener('click',()=>{
+  $('loc-modal').classList.remove('open');
+  pendingLocRow=null;pendingLocCoords=null;
+});
+$('loc-confirm').addEventListener('click',async()=>{
+  if(!pendingLocRow||!pendingLocCoords){$('loc-modal').classList.remove('open');return;}
+  const {ds,lid:l}=pendingLocRow;
+  const rows=state[ds]||[];
+  let row=rows.find(r=>r.lid===l);
+  if(!row){$('loc-modal').classList.remove('open');return;}
+  row.lat=pendingLocCoords.lat;
+  row.lng=pendingLocCoords.lng;
+  row.luogo=pendingLocCoords.address;
+  row.dirty=true;
+  $('loc-modal').classList.remove('open');
+  render();
+  await save(ds,l);
+  toast('📍 Posizione salvata');
+  pendingLocRow=null;pendingLocCoords=null;
+});
+$('loc-modal').addEventListener('click',e=>{ if(e.target===$('loc-modal')){ $('loc-modal').classList.remove('open'); pendingLocRow=null;pendingLocCoords=null; } });
+
 /* ── EXPORT ── */
 async function exportCSV(scope){
-  let q=sb.from(TABLE).select('data,prelievi,uscite,note,generato_il').order('data').order('id');
+  let q=sb.from(TABLE).select('data,prelievi,uscite,note,luogo,generato_il').order('data').order('id');
   if(scope==='month'){
     const first=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-01`;
     const last=`${activeYear}-${String(activeMonth+1).padStart(2,'0')}-${dim(activeYear,activeMonth)}`;
@@ -394,10 +517,15 @@ async function exportCSV(scope){
   toast('⏳ Preparazione…',3000);
   const {data,error}=await q;
   if(error){toast('⚠️ Errore export');return;}
-  const hdr='Data,Giorno,Prelievi,Uscite,Note,Generato_il';
+  const hdr='Data,Giorno,Prelievi,Uscite,Note,Luogo,Generato_il';
   const rows=(data||[]).map(r=>{
     const dw=DAYS_IT[new Date(r.data+'T00:00:00').getDay()];
-    return [r.data,dw,r.prelievi!=null?String(r.prelievi).replace('.',','):'',r.uscite!=null?String(r.uscite).replace('.',','):'',('"'+(r.note||'').replace(/"/g,'""')+'"'),r.generato_il||''].join(',');
+    return [r.data,dw,
+      r.prelievi!=null?String(r.prelievi).replace('.',','):'',
+      r.uscite!=null?String(r.uscite).replace('.',','):'',
+      '"'+(r.note||'').replace(/"/g,'""')+'"',
+      '"'+(r.luogo||'').replace(/"/g,'""')+'"',
+      r.generato_il||''].join(',');
   });
   const csv=[hdr,...rows].join('\r\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
@@ -412,7 +540,6 @@ $('exp-month').addEventListener('click',()=>{$('export-modal').classList.remove(
 $('exp-all').addEventListener('click',()=>{$('export-modal').classList.remove('open');exportCSV('all');});
 $('export-modal').addEventListener('click',e=>{if(e.target===$('export-modal'))$('export-modal').classList.remove('open');});
 
-// blocca navigating su beforeunload per evitare save spurii
 window.addEventListener('beforeunload',()=>{navigating=true;});
 
 buildTabs();
